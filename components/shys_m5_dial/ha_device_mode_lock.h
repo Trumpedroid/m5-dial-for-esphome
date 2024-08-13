@@ -76,7 +76,7 @@ namespace esphome
                                     width / 2,
                                     height / 2 - 60);  
 
-                    display.drawBitmapTransparent(OPEN_DOOR_IMG, width/2-35, height/2+30, 70, 70, 0xFFFF);
+                    display.drawBitmapTransparent(OPEN_DOOR_IMG2, width/2-35, height/2+30, 70, 70, 0xFFFF);
                     display.setFontsize(.7);
                     gfx->drawString("Open",
                                     width / 2,
