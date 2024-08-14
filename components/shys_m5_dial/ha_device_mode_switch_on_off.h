@@ -26,8 +26,8 @@ namespace esphome
                     gfx->setTextDatum(middle_center);
 
                     gfx->startWrite();                      // Secure SPI bus
-                    display.drawBitmapTransparent(OPEN_DOOR_IMG2, width/2-35, height/2+30, 70, 70, 0xFFFF);
-                    gfx->fillRect(0, 0, width, height, currentValue>0?YELLOW:RED);
+                    display.drawBitmap(OPEN_DOOR_IMG2, width/2-35, height/2+30, 70, 70, 0xFFFF);
+                    gfx->fillRect(0, 0, width, height, currentValue>0?GREEN:BLUE);
 
                     display.setFontsize(3);
                     gfx->drawString(currentValue>0?"on":"off",
