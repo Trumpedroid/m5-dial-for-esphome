@@ -93,7 +93,7 @@ namespace esphome
                     this->setFontByName(this->fontName);
 
                     gfx->startWrite();                      // Secure SPI bus
-                    gfx->fillRect(0, 0, width, height, BLUE);
+                    gfx->fillRect(0, 0, width, height, GREEN);
                     
                     this->setFontsize(1);
                     gfx->drawString("DISCONNECTED",
