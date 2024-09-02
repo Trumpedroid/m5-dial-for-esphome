@@ -4,14 +4,20 @@ namespace esphome
 {
     namespace shys_m5_dial
     {
-        class HaDeviceModeLightBrightness: public esphome::shys_m5_dial::HaDeviceMode {
+        class HaDeviceModeLightOnOff: public esphome::shys_m5_dial::HaDeviceMode {
             protected:
                 void sendValueToHomeAssistant(int value) override {
-                    haApi.turnLightOn(this->device.getEntityId(), value);
+                    if(getValue()<=0){
+                        haApi.turnLightOff(this->device.getEntityId());
+                    } else {
+                        haApi.turnLightOn(this->device.getEntityId());
+                    }
                 }
 
-                void showBrightnessMenu(M5DialDisplay& display, uint16_t currentValue){
+                void showOnOffMenu(M5DialDisplay& display){
                     LovyanGFX* gfx = display.getGfx();
+                    
+                    uint16_t currentValue = getValue();
 
                     uint16_t height = gfx->height();
                     uint16_t width  = gfx->width();
@@ -21,19 +27,18 @@ namespace esphome
 
                     gfx->startWrite();                      // Secure SPI bus
 
-                    gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue), RED);
-                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, YELLOW);
+                    gfx->fillRect(0, 0, width, height, currentValue>0?GREEN:BLUE);
 
                     display.setFontsize(3);
-                    gfx->drawString((String(currentValue) + "%").c_str(),
+                    gfx->drawString(currentValue>0?"onnn":"offff",
                                     width / 2,
-                                    height / 2 - 30);
+                                    height / 2 - 30);                        
                     
                     display.setFontsize(1);
                     gfx->drawString(this->device.getName().c_str(),
                                     width / 2,
                                     height / 2 + 20);
-                    gfx->drawString("Brightness",
+                    gfx->drawString("On/Off",
                                     width / 2,
                                     height / 2 + 50);  
 
@@ -41,39 +46,44 @@ namespace esphome
                 }
 
             public:
-                HaDeviceModeLightBrightness(HaDevice& device) : HaDeviceMode(device){}
+                HaDeviceModeLightOnOff(HaDevice& device) : HaDeviceMode(device){}
 
                 void refreshDisplay(M5DialDisplay& display, bool init) override {
-                    ESP_LOGD("DISPLAY", "refresh Display: Helligkeits-Modus");
-                    this->showBrightnessMenu(display, getValue());
+                    this->showOnOffMenu(display);
+                    ESP_LOGD("DISPLAY", "An/Aus-Modus");
                 }
 
                 void registerHAListener() override {
-                    std::string attrName = "brightness";
+                    std::string attrName = "";
                     api::global_api_server->subscribe_home_assistant_state(
                                 this->device.getEntityId().c_str(),
                                 attrName, 
                                 [this](const std::string &state) {
+                                    
                         if(this->isValueModified()){
                             return;
                         }
-                        auto val = parse_number<int>(state);
-                        if (!val.has_value()) {
-                            this->setReceivedValue(0);
-                            ESP_LOGD("HA_API", "No Brightness value in %s for %s", state.c_str(), this->device.getEntityId().c_str());
-                        } else {
-                            this->setReceivedValue(round((float)val.value()*100/255));
-                            ESP_LOGI("HA_API", "Got Brightness value %i for %s", val.value(), this->device.getEntityId().c_str());
-                        }
+
+                        int newState = strcmp("on", state.c_str())==0?1:0;
+
+                        this->setReceivedValue(newState);
+                        ESP_LOGI("HA_API", "Got value %s for %s", state.c_str(), this->device.getEntityId().c_str());
                     });
                 }
 
                 bool onTouch(M5DialDisplay& display, uint16_t x, uint16_t y) override {
-                    return this->defaultOnTouch(display, x, y);
+                    haApi.toggleLight(this->device.getEntityId());
+                    return true;
                 }
 
                 bool onRotary(M5DialDisplay& display, const char * direction) override {
-                    return this->defaultOnRotary(display, direction);
+                    if(strcmp(direction, ROTARY_LEFT)==0){
+                        haApi.turnLightOff(this->device.getEntityId());
+                    } else if(strcmp(direction, ROTARY_RIGHT)==0){
+                        haApi.turnLightOn(this->device.getEntityId());
+                    }
+
+                    return true;
                 }
 
                 bool onButton(M5DialDisplay& display, const char * clickType) override {
