@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../M5Dial"
+		},
+		{
+			"path": "../M5Unified"
+		}
+	],
+	"settings": {}
+}

@@ -4,19 +4,19 @@ namespace esphome
 {
     namespace shys_m5_dial
     {
-        class HaDeviceModeSwitchOnOff: public esphome::shys_m5_dial::HaDeviceMode {
+        class HaDeviceModeLightOnOff: public esphome::shys_m5_dial::HaDeviceMode {
             protected:
                 void sendValueToHomeAssistant(int value) override {
                     if(getValue()<=0){
-                        haApi.turnSwitchOff(this->device.getEntityId());
+                        haApi.turnLightOff(this->device.getEntityId());
                     } else {
-                        haApi.turnSwitchOn(this->device.getEntityId());
+                        haApi.turnLightOn(this->device.getEntityId());
                     }
                 }
 
                 void showOnOffMenu(M5DialDisplay& display){
                     LovyanGFX* gfx = display.getGfx();
-
+                    
                     uint16_t currentValue = getValue();
 
                     uint16_t height = gfx->height();
@@ -27,10 +27,10 @@ namespace esphome
 
                     gfx->startWrite();                      // Secure SPI bus
 
-                    gfx->fillRect(0, 0, width, height, currentValue>0?YELLOW:RED);
+                    gfx->fillRect(0, 0, width, height, currentValue>0?GREEN:BLUE);
 
                     display.setFontsize(3);
-                    gfx->drawString(currentValue>0?"on":"off",
+                    gfx->drawString(currentValue>0?"onnn":"offff",
                                     width / 2,
                                     height / 2 - 30);                        
                     
@@ -46,7 +46,7 @@ namespace esphome
                 }
 
             public:
-                HaDeviceModeSwitchOnOff(HaDevice& device) : HaDeviceMode(device){}
+                HaDeviceModeLightOnOff(HaDevice& device) : HaDeviceMode(device){}
 
                 void refreshDisplay(M5DialDisplay& display, bool init) override {
                     this->showOnOffMenu(display);
@@ -72,15 +72,15 @@ namespace esphome
                 }
 
                 bool onTouch(M5DialDisplay& display, uint16_t x, uint16_t y) override {
-                    haApi.toggleSwitch(this->device.getEntityId());
+                    haApi.toggleLight(this->device.getEntityId());
                     return true;
                 }
 
                 bool onRotary(M5DialDisplay& display, const char * direction) override {
                     if(strcmp(direction, ROTARY_LEFT)==0){
-                        haApi.turnSwitchOff(this->device.getEntityId());
+                        haApi.turnLightOff(this->device.getEntityId());
                     } else if(strcmp(direction, ROTARY_RIGHT)==0){
-                        haApi.turnSwitchOn(this->device.getEntityId());
+                        haApi.turnLightOn(this->device.getEntityId());
                     }
 
                     return true;
@@ -88,7 +88,7 @@ namespace esphome
 
                 bool onButton(M5DialDisplay& display, const char * clickType) override {
                     if (strcmp(clickType, BUTTON_SHORT)==0){
-                        haApi.toggleSwitch(this->device.getEntityId());
+                        haApi.toggleLight(this->device.getEntityId());
                         return true;
                     } 
                     return false;
