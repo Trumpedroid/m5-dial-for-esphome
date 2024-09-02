@@ -22,7 +22,7 @@ namespace esphome
                     uint16_t height = gfx->height();
                     uint16_t width  = gfx->width();
 
-                    gfx->setTextColor(MAROON);
+                    gfx->setTextColor(GREEN);
                     gfx->setTextDatum(middle_center);
 
                     gfx->startWrite();                      // Secure SPI bus
@@ -50,6 +50,7 @@ namespace esphome
 
                 void refreshDisplay(M5DialDisplay& display, bool init) override {
                     this->showOnOffMenu(display);
+                    
                     ESP_LOGD("DISPLAY", "An/Aus-Modus");
                 }
 
