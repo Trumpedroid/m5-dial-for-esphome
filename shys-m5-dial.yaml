@@ -7,7 +7,7 @@ esphome:
   name: ${name}
   name_add_mac_suffix: false
   project:
-    name: smarthomeyourself.m5_dial
+    name: Trumpedroid.m5_dial
     version: "1.0"
 
   platformio_options:
@@ -20,7 +20,7 @@ esphome:
       - ArduinoJson
       - m5stack/M5Unified@0.1.14
       - m5stack/M5Dial
-ttps://github.com/Trumpedroid/m5-dial-for-esphome
+
 external_components:
   - source:
       type: git
