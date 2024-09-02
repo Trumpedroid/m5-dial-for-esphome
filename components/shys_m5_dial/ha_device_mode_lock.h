@@ -138,7 +138,6 @@ namespace esphome
 
                 bool onButton(M5DialDisplay& display, const char * clickType) override {
                     if (strcmp(clickType, BUTTON_SHORT)==0){
-                        this->refreshDisplay(display);
                         if(this->isLocked()){
                             if(this->isOpenOnButton()){
                                 this->openLock();

@@ -29,7 +29,7 @@ external_components:
 
       
       ref: main
-    components: [shys_m5_diald]
+    components: [shys_m5_dial]
 
 dashboard_import:
   package_import_url: github://Trumpedroid/m5-dial-for-esphome/shys-m5-diald.yaml@main
