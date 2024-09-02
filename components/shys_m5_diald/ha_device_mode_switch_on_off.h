@@ -4,33 +4,33 @@ namespace esphome
 {
     namespace shys_m5_dial
     {
-        class HaDeviceModeLightOnOff: public esphome::shys_m5_dial::HaDeviceMode {
+        class HaDeviceModeSwitchOnOff: public esphome::shys_m5_dial::HaDeviceMode {
             protected:
                 void sendValueToHomeAssistant(int value) override {
                     if(getValue()<=0){
-                        haApi.turnLightOff(this->device.getEntityId());
+                        haApi.turnSwitchOff(this->device.getEntityId());
                     } else {
-                        haApi.turnLightOn(this->device.getEntityId());
+                        haApi.turnSwitchOn(this->device.getEntityId());
                     }
                 }
 
                 void showOnOffMenu(M5DialDisplay& display){
                     LovyanGFX* gfx = display.getGfx();
-                    
+
                     uint16_t currentValue = getValue();
 
                     uint16_t height = gfx->height();
                     uint16_t width  = gfx->width();
 
-                    gfx->setTextColor(MAROON);
-                    gfx->setTextDatum(middle_center);
+                    gfx->setTextColor(GREEN);
+                    gfx->setTextDatum(left_center);
 
                     gfx->startWrite();                      // Secure SPI bus
-
-                    gfx->fillRect(0, 0, width, height, currentValue>0?YELLOW:RED);
+                    display.drawBitmap(OPEN_DOOR_IMG2, width/2-35, height/2+30, 70, 70, 0xFFFF);
+                    gfx->fillRect(0, 0, width, height, currentValue>0?GREEN:BLUE);
 
                     display.setFontsize(3);
-                    gfx->drawString(currentValue>0?"on":"off",
+                    gfx->drawString(currentValue>0?"onn":"offf",
                                     width / 2,
                                     height / 2 - 30);                        
                     
@@ -46,10 +46,11 @@ namespace esphome
                 }
 
             public:
-                HaDeviceModeLightOnOff(HaDevice& device) : HaDeviceMode(device){}
+                HaDeviceModeSwitchOnOff(HaDevice& device) : HaDeviceMode(device){}
 
                 void refreshDisplay(M5DialDisplay& display, bool init) override {
                     this->showOnOffMenu(display);
+                    
                     ESP_LOGD("DISPLAY", "An/Aus-Modus");
                 }
 
@@ -72,15 +73,15 @@ namespace esphome
                 }
 
                 bool onTouch(M5DialDisplay& display, uint16_t x, uint16_t y) override {
-                    haApi.toggleLight(this->device.getEntityId());
+                    haApi.toggleSwitch(this->device.getEntityId());
                     return true;
                 }
 
                 bool onRotary(M5DialDisplay& display, const char * direction) override {
                     if(strcmp(direction, ROTARY_LEFT)==0){
-                        haApi.turnLightOff(this->device.getEntityId());
+                        haApi.turnSwitchOff(this->device.getEntityId());
                     } else if(strcmp(direction, ROTARY_RIGHT)==0){
-                        haApi.turnLightOn(this->device.getEntityId());
+                        haApi.turnSwitchOn(this->device.getEntityId());
                     }
 
                     return true;
@@ -88,7 +89,7 @@ namespace esphome
 
                 bool onButton(M5DialDisplay& display, const char * clickType) override {
                     if (strcmp(clickType, BUTTON_SHORT)==0){
-                        haApi.toggleLight(this->device.getEntityId());
+                        haApi.toggleSwitch(this->device.getEntityId());
                         return true;
                     } 
                     return false;
