@@ -40,6 +40,11 @@ CONF_DEVICE_MODE_WHITE_MAX_KELVIN     = "max_kelvin"
 CONF_DEVICE_CLIMATES                  = "climates"
 CONF_DEVICE_CLIMATE_TEMP_MODE         = "temp_mode"
 
+# PLANT STATES
+CONF_DEVICE_PLANT_STATE               = "plant_state"
+CONF_DEVICE_PLANT_STATE_MODE          = "plant_state_mode"
+
+
 # TEMP-MODE PARAMETER
 CONF_DEVICE_MODE_TEMP_MIN_TEMP        = "min_temperature"
 CONF_DEVICE_MODE_TEMP_MAX_TEMP        = "max_temperature"
