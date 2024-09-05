@@ -290,8 +290,8 @@ def to_code(config):
                                      ))
         
         if CONF_DEVICE_PLANT_STATE in confDevices:
-            confClimates = confDevices[CONF_DEVICE_PLANT_STATE]
-            for climateEntry in confClimates:
+            confPlantState = confDevices[CONF_DEVICE_PLANT_STATE]
+            for climateEntry in confPlantState:
                 cg.add(var.addClimate(climateEntry[CONF_DEVICE_ENTRY_ID], 
                                       climateEntry[CONF_DEVICE_ENTRY_NAME], 
                                       json.dumps(climateEntry[CONF_DEVICE_MODES])
