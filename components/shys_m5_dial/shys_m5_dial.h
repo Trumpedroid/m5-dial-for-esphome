@@ -7,6 +7,7 @@
 #include "ha_device.h"
 #include "ha_device_light.h"
 #include "ha_device_climate.h"
+#include "ha_device_plant_state.h"
 #include "ha_device_cover.h"
 #include "ha_device_switch.h"
 #include "ha_device_fan.h"
@@ -189,10 +190,16 @@ namespace esphome
         HaDeviceClimate* climate = new HaDeviceClimate(entity_id, name, modes);
         addDevice(climate);
       }
-
+      /**
+      * 
+      */
+      void addPlantState(const std::string& entity_id, const std::string& name, const std::string& modes){
+        HaDevicePlantState* plantState = new HaDevicePlantState(entity_id, name, modes);
+        addDevice(plantState);
+      }
 
      /**
-      * 
+      * minor error "name shouold not be climate but Cover"
       */
       void addCover(const std::string& entity_id, const std::string& name, const std::string& modes){
         HaDeviceCover* climate = new HaDeviceCover(entity_id, name, modes);
