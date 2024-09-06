@@ -34,7 +34,7 @@ namespace esphome
                     gfx->startWrite();                      // Secure SPI bus
 
                     gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue) , BLUE);
-                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, GREEN);
+                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, YELLOW);
 
                     display.setFontsize(3);
                     gfx->drawString(String(currentValue).c_str(),
