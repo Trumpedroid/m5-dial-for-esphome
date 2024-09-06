@@ -291,10 +291,10 @@ def to_code(config):
         
         if CONF_DEVICE_PLANT_STATE in confDevices:
             confPlantState = confDevices[CONF_DEVICE_PLANT_STATE]
-            for climateEntry in confPlantState:
-                cg.add(var.addClimate(climateEntry[CONF_DEVICE_ENTRY_ID], 
-                                      climateEntry[CONF_DEVICE_ENTRY_NAME], 
-                                      json.dumps(climateEntry[CONF_DEVICE_MODES])
+            for plantEntry in confPlantState:
+                cg.add(var.addPlantState(plantEntry[CONF_DEVICE_ENTRY_ID], 
+                                      plantEntry[CONF_DEVICE_ENTRY_NAME], 
+                                      json.dumps(plantEntry[CONF_DEVICE_MODES])
                                      ))
 
         if CONF_DEVICE_COVER in confDevices:
