@@ -27,7 +27,7 @@ namespace esphome
 
                     gfx->startWrite();                      // Secure SPI bus
 
-                    gfx->fillRect(0, 0, width, height, currentValue>0?GREEN:RED);
+                    gfx->fillRect(0, 0, width, height, currentValue>0?CYAN:RED);
 
                     display.setFontsize(3);
                     gfx->drawString(currentValue>0?"onn":"offf",

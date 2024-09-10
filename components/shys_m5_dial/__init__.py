@@ -5,7 +5,7 @@ import esphome.config_validation as cv
 from esphome.const import CONF_ID, CONF_NAME
 
 # LIMITS
-MAX_DEVICES = 50
+MAX_DEVICES = 51
 
 
 # PARAMETER

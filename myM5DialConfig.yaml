@@ -1,0 +1,102 @@
+substitutions:
+  name: "m5-dial"
+  wifi_ssid: THE_Internet_LA
+  wifi_password: 30FamKrimm
+
+esphome:
+  name: m5-stack-rotary-button
+  friendly_name: m5 Stack Rotary Button
+  name_add_mac_suffix: false
+  project:
+    name: Trumpedroid.m5_dial
+    version: "1.0"
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "29D3rvbXO/RMMRTvaaM4L89WAZIJ+Q3UmbTzNiTbWcQ="
+
+ota:
+  - platform: esphome
+    password: "5c04e5cd5af7585230e7cc12683d1d7a"
+
+wifi:
+  ssid: THE_Internet_LA
+  password: 30FamKrimm
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "M5-Stack-Rotary-Button"
+    password: "lwDLTvt16OYU"
+
+captive_portal:
+    
+logger:
+  level: DEBUG
+
+
+packages:
+  m5_tough_package:
+    url: file://C:/ESPHomeSpace/m5-dial-for-esphome
+    file: shys-m5-dial.yaml
+    refresh: 1min
+
+shys_m5_dial:
+  name: Dial
+  screen_off_time: 45000
+  rotary_step_width: 5
+  long_press_duration: 1200
+  font: FreeSans12pt7b
+  font_factor: 1
+
+  devices:
+    lights:
+      - entity: light.burostatusled_buero_status_leds
+        name: BüroStatusLED Buero Status LEDs
+        modes:
+          dimm_mode:
+            enable: true
+            rotary_step_width: 10
+          rgb_mode: 
+            enable: true
+            rotary_step_width: 30
+          white_mode: 
+            enable: true
+            rotary_step_width: 100
+            min_kelvin: 2500
+            max_kelvin: 7000
+    
+    plant_state:
+      - entity: sensor.b_parasite_ecf3_bonsai_temperature
+        name: Heater
+        modes:
+          plant_state_mode:
+            rotary_step_width: 1
+            min_temperature: 4
+            max_temperature: 30
+
+    climates:
+      - entity: sensor.b_parasite_ecf3_bonsai_temperature
+        name: Heater
+        modes:
+          temp_mode:
+            rotary_step_width: 1
+            min_temperature: 4
+            max_temperature: 30
+
+    switches:
+      - entity: switch.licht_decke_buro_menne
+        name: Deckenlampe Büro Menne
+        
+    lock:
+      - entity: lock.my_lock1
+        name: Lock 1
+        modes:
+          lock_mode:
+            rotary_step_width: 1
+            open_on_button: false
