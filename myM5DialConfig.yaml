@@ -11,6 +11,18 @@ esphome:
     name: Trumpedroid.m5_dial
     version: "1.0"
 
+  platformio_options:
+    lib_deps:
+      - WiFi
+      - SPI
+      - FS
+      - Wire
+      - EEPROM
+      - ArduinoJson
+      - m5stack/M5Unified@0.1.14
+      - m5stack/M5Dial
+
+
 esp32:
   board: esp32-s3-devkitc-1
   framework:
@@ -40,11 +52,10 @@ logger:
   level: DEBUG
 
 
-packages:
-  m5_tough_package:
-    url: file://C:/ESPHomeSpace/m5-dial-for-esphome
-    file: myM5DialConfig.yaml
-    refresh: 1min
+external_components:
+  - source:
+      type: local
+      path: C:\ESPHomeSpace\m5-dial-for-esphome\components
 
 shys_m5_dial:
   name: Dial

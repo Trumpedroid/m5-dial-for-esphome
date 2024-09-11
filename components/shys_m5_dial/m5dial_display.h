@@ -76,7 +76,7 @@ namespace esphome
                     gfx->fillRect(0, 0, width, height, DARKGREY);
                     
                     this->setFontsize(2);
-                    gfx->drawString("OFFLINE 1",
+                    gfx->drawString("OFFLINE 2",
                                     width / 2,
                                     height / 2);
 

@@ -25,7 +25,7 @@ namespace esphome
                     gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, GREEN);
 
                     display.setFontsize(3);
-                    gfx->drawString((String(currentValue) + "per%").c_str(),
+                    gfx->drawString((String(currentValue) + "var%").c_str(),
                                     width / 2,
                                     height / 2 - 30);
                     
