@@ -43,7 +43,7 @@ logger:
 packages:
   m5_tough_package:
     url: file://C:/ESPHomeSpace/m5-dial-for-esphome
-    file: shys-m5-dial.yaml
+    file: myM5DialConfig.yaml
     refresh: 1min
 
 shys_m5_dial:
