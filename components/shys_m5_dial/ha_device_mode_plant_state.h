@@ -20,7 +20,7 @@ namespace esphome
                     haApi.setClimateTemperature(this->device.getEntityId(), value);
                 }
 
-                void showTemperatureMenu(M5DialDisplay& display){
+                void showPlantStateMenu(M5DialDisplay& display){
                     LovyanGFX* gfx = display.getGfx();
 
                     uint16_t currentValue = getValue();
@@ -34,7 +34,7 @@ namespace esphome
                     gfx->startWrite();                      // Secure SPI bus
 
                     gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue) , RED);
-                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, YELLOW);
+                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, BLUE);
 
                     display.setFontsize(3);
                     gfx->drawString(String(currentValue).c_str(),
@@ -45,7 +45,7 @@ namespace esphome
                     gfx->drawString(this->device.getName().c_str(),
                                     width / 2,
                                     height / 2 + 20);
-                    gfx->drawString("Temperature",
+                    gfx->drawString("Plant State",
                                     width / 2,
                                     height / 2 + 50);  
 
@@ -58,8 +58,8 @@ namespace esphome
                 }
 
                 void refreshDisplay(M5DialDisplay& display, bool init) override {
-                    this->showTemperatureMenu(display);
-                    ESP_LOGD("DISPLAY", "Temperature-Modus");
+                    this->showPlantStateMenu(display);
+                    ESP_LOGD("DISPLAY", "Plant State-Modus");
                 }
 
                 void registerHAListener() override {
@@ -74,7 +74,7 @@ namespace esphome
                         }
 
                         this->setHvacMode(state.c_str());
-                        ESP_LOGI("HA_API", "Got Mode %s for %s", state.c_str(), this->device.getEntityId().c_str());
+                        ESP_LOGI("HA_API", "Got Plant State Mode %s for %s", state.c_str(), this->device.getEntityId().c_str());
                     });
 
                     std::string attrNameTemp = "temperature";
@@ -91,10 +91,10 @@ namespace esphome
 
                         if (!val.has_value()) {
                             this->setReceivedValue(0);
-                            ESP_LOGD("HA_API", "No Temperature value in %s for %s", state.c_str(), this->device.getEntityId().c_str());
+                            ESP_LOGD("HA_API", "No Plant State value in %s for %s", state.c_str(), this->device.getEntityId().c_str());
                         } else {
-                            this->setReceivedValue(int(val.value()));
-                            ESP_LOGI("HA_API", "Got Temperature value %i for %s", int(val.value()), this->device.getEntityId().c_str());
+                            this->setReceivedValue(float(val.value()));
+                            ESP_LOGI("HA_API", "Got Plant State value %i for %s", float(val.value()), this->device.getEntityId().c_str());
                         }
                     });
                 }
