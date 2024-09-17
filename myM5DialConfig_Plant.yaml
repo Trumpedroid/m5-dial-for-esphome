@@ -56,12 +56,41 @@ shys_m5_dial:
   font_factor: 1
 
   devices:
-    shotTimer_state:
-      - entity: sensor.mr022480_shot_timer
-        name: ShotTimer
+    lights:
+      - entity: light.burostatusled_buero_status_leds
+        name: BüroStatusLED Buero Status LEDs
         modes:
-          shotTimer_state_mode:
+          dimm_mode:
+            enable: true
+            rotary_step_width: 10
+          rgb_mode: 
+            enable: true
+            rotary_step_width: 30
+          white_mode: 
+            enable: true
+            rotary_step_width: 100
+            min_kelvin: 2500
+            max_kelvin: 7000
+
+    climates:
+      - entity: sensor.b_parasite_ecf3_bonsai_temperature
+        name: Heater
+        modes:
+          temp_mode:
             rotary_step_width: 1
-            min_shot_time: 0
-            max_shot_time: 35
+            min_temperature: 4
+            max_temperature: 30
+
+    switches:
+      - entity: switch.licht_decke_buro_menne
+        name: Deckenlampe Büro Menne
+        
+    lock:
+      - entity: lock.my_lock1
+        name: Lock 1
+        modes:
+          lock_mode:
+            rotary_step_width: 1
+            open_on_button: false
+
 

@@ -7,7 +7,7 @@
 #include "ha_device.h"
 #include "ha_device_light.h"
 #include "ha_device_climate.h"
-#include "ha_device_plant_state.h"
+#include "ha_device_shotTimer_state.h"
 #include "ha_device_cover.h"
 #include "ha_device_switch.h"
 #include "ha_device_fan.h"
@@ -193,9 +193,9 @@ namespace esphome
       /**
       * 
       */
-      void addPlantState(const std::string& entity_id, const std::string& name, const std::string& modes){
-        HaDevicePlantState* plantState = new HaDevicePlantState(entity_id, name, modes);
-        addDevice(plantState);
+      void addshotTimerState(const std::string& entity_id, const std::string& name, const std::string& modes){
+        HaDeviceshotTimerState* shotTimerState = new HaDeviceshotTimerState(entity_id, name, modes);
+        addDevice(shotTimerState);
       }
 
      /**

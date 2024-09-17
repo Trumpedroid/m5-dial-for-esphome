@@ -4,7 +4,7 @@ namespace esphome
 {
     namespace shys_m5_dial
     {
-        class HaDeviceModePlantState: public esphome::shys_m5_dial::HaDeviceMode {
+        class HaDeviceModeshotTimerState: public esphome::shys_m5_dial::HaDeviceMode {
             protected:
                 std::string hvac_mode = "none";
 
@@ -20,11 +20,12 @@ namespace esphome
                     haApi.setClimateTemperature(this->device.getEntityId(), value);
                 }
 
-                void showPlantStateMenu(M5DialDisplay& display){
+                void showshotTimerStateMenu(M5DialDisplay& display){
+                    
                     LovyanGFX* gfx = display.getGfx();
 
-                    uint16_t currentValue = getValue();
-
+                    int currentValue = getValue();
+                    ESP_LOGD("DISPLAY", "showshotTimerStateMenu Function call");
                     uint16_t height = gfx->height();
                     uint16_t width  = gfx->width();
 
@@ -33,8 +34,8 @@ namespace esphome
                     
                     gfx->startWrite();                      // Secure SPI bus
 
-                    gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue) , RED);
-                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, BLUE);
+                    gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue) , CYAN);
+                    gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, ORANGE);
 
                     display.setFontsize(3);
                     gfx->drawString(String(currentValue).c_str(),
@@ -45,7 +46,7 @@ namespace esphome
                     gfx->drawString(this->device.getName().c_str(),
                                     width / 2,
                                     height / 2 + 20);
-                    gfx->drawString("Plant State",
+                    gfx->drawString("shotTimer State",
                                     width / 2,
                                     height / 2 + 50);  
 
@@ -53,13 +54,13 @@ namespace esphome
                 }
 
             public:
-                HaDeviceModePlantState(HaDevice& device) : HaDeviceMode(device){
+                HaDeviceModeshotTimerState(HaDevice& device) : HaDeviceMode(device){
                     this->maxValue = 40;
                 }
 
                 void refreshDisplay(M5DialDisplay& display, bool init) override {
-                    this->showPlantStateMenu(display);
-                    ESP_LOGD("DISPLAY", "Plant State-Modus");
+                    this->showshotTimerStateMenu(display);
+                    ESP_LOGD("DISPLAY", "shotTimer State-Modus");
                 }
 
                 void registerHAListener() override {
@@ -72,9 +73,13 @@ namespace esphome
                         if(this->isValueModified()){
                             return;
                         }
+                        int newState = std::stoi(state.c_str());
 
-                        this->setHvacMode(state.c_str());
-                        ESP_LOGI("HA_API", "Got Plant State Mode %s for %s", state.c_str(), this->device.getEntityId().c_str());
+                        this->setReceivedValue(newState);
+
+                        //this->setHvacMode(state.c_str());
+                        //This listener gets called
+                        //ESP_LOGI("HA_API", "Got shotTimer State Mode %s in int %i for %s", state.c_str(), int(state.c_str()), this->device.getEntityId().c_str());
                     });
 
                     std::string attrNameTemp = "temperature";
@@ -82,44 +87,23 @@ namespace esphome
                                 this->device.getEntityId().c_str(),
                                 attrNameTemp, 
                                 [this](const std::string &state) {
+                        ESP_LOGI("HA_API", "Subscribe HA --  shotTimer State Mode %s for %s", state.c_str(), this->device.getEntityId().c_str());
 
                         if(this->isValueModified()){
                             return;
                         }
 
-                        auto val = parse_number<float>(state);
+                        auto val = parse_number<int>(state);
 
                         if (!val.has_value()) {
                             this->setReceivedValue(0);
-                            ESP_LOGD("HA_API", "No Plant State value in %s for %s", state.c_str(), this->device.getEntityId().c_str());
+                            ESP_LOGD("HA_API", "No shotTimer State value in %s for %s", state.c_str(), this->device.getEntityId().c_str());
                         } else {
-                            this->setReceivedValue(float(val.value()));
-                            ESP_LOGI("HA_API", "Got Plant State value %i for %s", float(val.value()), this->device.getEntityId().c_str());
+                            this->setReceivedValue(int(val.value()));
+                            ESP_LOGI("HA_API", "Got shotTimer State value %i for %s", int(val.value()), this->device.getEntityId().c_str());
                         }
                     });
-                }
-
-
-                bool onTouch(M5DialDisplay& display, uint16_t x, uint16_t y) override {
-                    return defaultOnTouch(display, x, y);        
-                }
-
-                bool onRotary(M5DialDisplay& display, const char * direction) override {
-                    return defaultOnRotary(display, direction);
-                }
-
-                bool onButton(M5DialDisplay& display, const char * clickType) override {
-                    if (strcmp(clickType, BUTTON_SHORT)==0){
-                        if(strcmp(this->getHvacMode().c_str(), "off")==0){
-                            haApi.turnClimateOn(this->device.getEntityId());
-                        } else {
-                            haApi.turnClimateOff(this->device.getEntityId());
-                        }
-                        
-                        return true;
-                    } 
-                    return false;
-                }
+                }           
 
         };
     }

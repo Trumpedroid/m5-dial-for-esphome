@@ -10,7 +10,7 @@ namespace esphome
             protected:
                 LovyanGFX* gfx = &M5Dial.Display;
 
-                int timeToScreenOff = 30000;
+                int timeToScreenOff = 400000;
                 unsigned long lastEvent = 0;
                 uint16_t lastMode = -1;
 

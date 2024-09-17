@@ -40,10 +40,13 @@ CONF_DEVICE_MODE_WHITE_MAX_KELVIN     = "max_kelvin"
 CONF_DEVICE_CLIMATES                  = "climates"
 CONF_DEVICE_CLIMATE_TEMP_MODE         = "temp_mode"
 
-# PLANT STATES
-CONF_DEVICE_PLANT_STATE               = "plant_state"
-CONF_DEVICE_PLANT_STATE_MODE          = "plant_state_mode"
+# SHOTTIMER STATES
+CONF_DEVICE_SHOTTIMER_STATE               = "shotTimer_state"
+CONF_DEVICE_SHOTTIMER_STATE_MODE          = "shotTimer_state_mode"
 
+# TEMP-MODE PARAMETER
+CONF_DEVICE_MODE_SHOT_MIN_TIME        = "min_shot_time"
+CONF_DEVICE_MODE_SHOT_MAX_TIME        = "max_shot_time"
 
 # TEMP-MODE PARAMETER
 CONF_DEVICE_MODE_TEMP_MIN_TEMP        = "min_temperature"
@@ -92,7 +95,10 @@ DEFAULT_WHITE_MIN_KELVIN               = 2000
 DEFAULT_WHITE_MAX_KELVIN               = 6500
 DEFAULT_WHITE_MIN_TEMP                 = 4
 DEFAULT_WHITE_MAX_TEMP                 = 30
+DEFAULT_WHITE_MIN_TIME                 = 0
+DEFAULT_WHITE_MAX_TIME                 = 50
 DEFAULT_CLIMATE_ROTARY_STEP_WIDTH      = 1
+DEFAULT_SHOT_ROTARY_STEP_WIDTH         = 1
 DEFAULT_MEDIA_PLAYER_ROTARY_STEP_WIDTH = 1
 DEFAULT_LOCK_ROTARY_STEP_WIDTH         = 1
 
@@ -154,18 +160,19 @@ CONFIG_SCHEMA = cv.Schema({
             }))
         })]),
 
-        cv.Optional(CONF_DEVICE_PLANT_STATE, default=[]): cv.All([dict({
+        cv.Optional(CONF_DEVICE_SHOTTIMER_STATE, default=[]): cv.All([dict({
             cv.Required(CONF_DEVICE_ENTRY_ID): cv.string,
             cv.Required(CONF_DEVICE_ENTRY_NAME): cv.string,
 
             cv.Optional(CONF_DEVICE_MODES, default=dict()): cv.All(dict({
-                cv.Optional(CONF_DEVICE_PLANT_STATE_MODE, default=dict()): cv.All(dict({
-                    cv.Optional(CONF_ROTARY_STEP_WIDTH, default=DEFAULT_CLIMATE_ROTARY_STEP_WIDTH): cv.int_range(1, 500),
-                    cv.Optional(CONF_DEVICE_MODE_TEMP_MIN_TEMP, default=DEFAULT_WHITE_MIN_TEMP): cv.int_range(0, 500),
-                    cv.Optional(CONF_DEVICE_MODE_TEMP_MAX_TEMP, default=DEFAULT_WHITE_MAX_TEMP): cv.int_range(0, 500)
+                cv.Optional(CONF_DEVICE_SHOTTIMER_STATE_MODE, default=dict()): cv.All(dict({
+                    cv.Optional(CONF_ROTARY_STEP_WIDTH, default=DEFAULT_SHOT_ROTARY_STEP_WIDTH): cv.int_range(1, 500),
+                    cv.Optional(CONF_DEVICE_MODE_SHOT_MIN_TIME, default=DEFAULT_WHITE_MIN_TIME): cv.int_range(0, 500),
+                    cv.Optional(CONF_DEVICE_MODE_SHOT_MAX_TIME, default=DEFAULT_WHITE_MAX_TIME): cv.int_range(0, 500)
                 }))
             }))
         })]),
+
 
         cv.Optional(CONF_DEVICE_COVER, default=[]): cv.All([dict({
             cv.Required(CONF_DEVICE_ENTRY_ID): cv.string,
@@ -289,12 +296,12 @@ def to_code(config):
                                       json.dumps(climateEntry[CONF_DEVICE_MODES])
                                      ))
         
-        if CONF_DEVICE_PLANT_STATE in confDevices:
-            confPlantState = confDevices[CONF_DEVICE_PLANT_STATE]
-            for plantEntry in confPlantState:
-                cg.add(var.addPlantState(plantEntry[CONF_DEVICE_ENTRY_ID], 
-                                      plantEntry[CONF_DEVICE_ENTRY_NAME], 
-                                      json.dumps(plantEntry[CONF_DEVICE_MODES])
+        if CONF_DEVICE_SHOTTIMER_STATE in confDevices:
+            confshotTimerState = confDevices[CONF_DEVICE_SHOTTIMER_STATE]
+            for shotTimerEntry in confshotTimerState:
+                cg.add(var.addshotTimerState(shotTimerEntry[CONF_DEVICE_ENTRY_ID], 
+                                      shotTimerEntry[CONF_DEVICE_ENTRY_NAME], 
+                                      json.dumps(shotTimerEntry[CONF_DEVICE_MODES])
                                      ))
 
         if CONF_DEVICE_COVER in confDevices:
