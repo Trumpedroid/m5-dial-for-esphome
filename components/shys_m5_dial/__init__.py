@@ -41,8 +41,13 @@ CONF_DEVICE_CLIMATES                  = "climates"
 CONF_DEVICE_CLIMATE_TEMP_MODE         = "temp_mode"
 
 # SHOTTIMER STATES
-CONF_DEVICE_SHOTTIMER_STATE               = "shotTimer_state"
-CONF_DEVICE_SHOTTIMER_STATE_MODE          = "shotTimer_state_mode"
+CONF_DEVICE_SHOTTIMER_STATE           = "shotTimer_state"
+CONF_DEVICE_SHOTTIMER_STATE_MODE      = "shotTimer_state_mode"
+
+# PLANT HAPPY STATES
+CONF_DEVICE_PLANTHAPPY_STATE          = "plantHappy_state"
+CONF_DEVICE_PLANTHAPPY_MODE           = "plantHappy_mode"
+
 
 # TEMP-MODE PARAMETER
 CONF_DEVICE_MODE_SHOT_MIN_TIME        = "min_shot_time"
@@ -52,6 +57,10 @@ CONF_DEVICE_MODE_SHOT_MAX_TIME        = "max_shot_time"
 CONF_DEVICE_MODE_TEMP_MIN_TEMP        = "min_temperature"
 CONF_DEVICE_MODE_TEMP_MAX_TEMP        = "max_temperature"
 
+# PLANT-HAPPY-MODE PARAMETER
+CONF_DEVICE_MODE_PLANT_MIN_HUMIDITY   = "min_moisture"
+CONF_DEVICE_MODE_PLANT_MED_HUMIDITY   = "med_moisture"
+CONF_DEVICE_MODE_PLANT_MAX_HUMIDITY   = "max_moisture"
 
 # COVER
 CONF_DEVICE_COVER                     = "covers"
@@ -169,6 +178,21 @@ CONFIG_SCHEMA = cv.Schema({
                     cv.Optional(CONF_ROTARY_STEP_WIDTH, default=DEFAULT_SHOT_ROTARY_STEP_WIDTH): cv.int_range(1, 500),
                     cv.Optional(CONF_DEVICE_MODE_SHOT_MIN_TIME, default=DEFAULT_WHITE_MIN_TIME): cv.int_range(0, 500),
                     cv.Optional(CONF_DEVICE_MODE_SHOT_MAX_TIME, default=DEFAULT_WHITE_MAX_TIME): cv.int_range(0, 500)
+                }))
+            }))
+        })]),
+       
+
+        cv.Optional(CONF_DEVICE_PLANTHAPPY_STATE, default=[]): cv.All([dict({
+            cv.Required(CONF_DEVICE_ENTRY_ID): cv.string,
+            cv.Required(CONF_DEVICE_ENTRY_NAME): cv.string,
+
+            cv.Optional(CONF_DEVICE_MODES, default=dict()): cv.All(dict({
+                cv.Optional(CONF_DEVICE_PLANTHAPPY_MODE, default=dict()): cv.All(dict({
+                    cv.Optional(CONF_ROTARY_STEP_WIDTH, default=DEFAULT_SHOT_ROTARY_STEP_WIDTH): cv.int_range(1, 500),
+                    cv.Optional(CONF_DEVICE_MODE_PLANT_MIN_HUMIDITY, default=DEFAULT_WHITE_MIN_TIME): cv.int_range(0, 500),
+                    cv.Optional(CONF_DEVICE_MODE_PLANT_MED_HUMIDITY, default=DEFAULT_WHITE_MIN_TIME): cv.int_range(0, 500),
+                    cv.Optional(CONF_DEVICE_MODE_PLANT_MAX_HUMIDITY, default=DEFAULT_WHITE_MAX_TIME): cv.int_range(0, 500)
                 }))
             }))
         })]),
@@ -303,6 +327,15 @@ def to_code(config):
                                       shotTimerEntry[CONF_DEVICE_ENTRY_NAME], 
                                       json.dumps(shotTimerEntry[CONF_DEVICE_MODES])
                                      ))
+        
+        if CONF_DEVICE_PLANTHAPPY_STATE in confDevices:
+            confplantHappyState = confDevices[CONF_DEVICE_PLANTHAPPY_STATE]
+            for plantHappyEntry in confplantHappyState:
+                cg.add(var.addplantHappyState(plantHappyEntry[CONF_DEVICE_ENTRY_ID], 
+                                      plantHappyEntry[CONF_DEVICE_ENTRY_NAME], 
+                                      json.dumps(plantHappyEntry[CONF_DEVICE_MODES])
+                                     ))
+
 
         if CONF_DEVICE_COVER in confDevices:
             confCover = confDevices[CONF_DEVICE_COVER]

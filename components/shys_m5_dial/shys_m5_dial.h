@@ -8,6 +8,7 @@
 #include "ha_device_light.h"
 #include "ha_device_climate.h"
 #include "ha_device_shotTimer_state.h"
+#include "ha_device_plantHappy_state.h"
 #include "ha_device_cover.h"
 #include "ha_device_switch.h"
 #include "ha_device_fan.h"
@@ -198,6 +199,14 @@ namespace esphome
         addDevice(shotTimerState);
       }
 
+       /**
+      * 
+      */
+      void addplantHappyState(const std::string& entity_id, const std::string& name, const std::string& modes){
+        HaDevicePlantHappyState* plantHappyState = new HaDevicePlantHappyState(entity_id, name, modes);
+        addDevice(plantHappyState);
+      }
+
      /**
       * minor error "name shouold not be climate but Cover"
       */
@@ -340,7 +349,8 @@ namespace esphome
         M5Dial.Speaker.tone(5000, 20);
 
         if(m5DialDisplay->isDisplayOn()){
-          devices[currentDevice]->onRotary(*m5DialDisplay, ROTARY_LEFT);
+          //devices[currentDevice]->onRotary(*m5DialDisplay, ROTARY_LEFT);
+          this->previousDevice();
         }
 
         lastRotaryEvent = esphome::millis();
@@ -354,7 +364,8 @@ namespace esphome
         M5Dial.Speaker.tone(5000, 20);
 
         if(m5DialDisplay->isDisplayOn()){
-          devices[currentDevice]->onRotary(*m5DialDisplay, ROTARY_RIGHT);
+          //devices[currentDevice]->onRotary(*m5DialDisplay, ROTARY_RIGHT);
+          this->nextDevice();
         }
 
         lastRotaryEvent = esphome::millis();

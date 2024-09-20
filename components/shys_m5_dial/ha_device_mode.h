@@ -14,6 +14,7 @@ namespace esphome
             protected:
                 int value = 0;
                 int minValue = 0;
+                int medValue = 50;
                 int maxValue = 100;
 
                 int rotaryStepWidth = 10;
@@ -190,6 +191,14 @@ namespace esphome
 
                 void setMinValue(int val){
                     this->minValue = val;
+                }
+
+                int getMedValue(){
+                    return this->medValue;
+                }
+
+                void setMedValue(int val){
+                    this->medValue = val;
                 }
 
                 int getMaxValue(){

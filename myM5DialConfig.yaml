@@ -14,7 +14,7 @@ esphome:
       - Wire
       - EEPROM
       - ArduinoJson
-      - m5stack/M5Unified@0.1.12
+      - m5stack/M5Unified@0.1.14
       - m5stack/M5Dial
 
 
@@ -61,7 +61,21 @@ shys_m5_dial:
         name: ShotTimer
         modes:
           shotTimer_state_mode:
-            rotary_step_width: 1
             min_shot_time: 0
-            max_shot_time: 35
+            max_shot_time: 30
+    plantHappy_state:
+    - entity: sensor.b_parasite_ecf3_bonsai_moisture
+      name: Bonsai
+      modes:
+        plantHappy_mode:
+          min_moisture: 0
+          med_moisture: 50
+          max_moisture: 80
+    - entity: sensor.b_parasite_808f_sofa_garl_moisture
+      name: Sofa Garl
+      modes:
+        plantHappy_mode:
+          min_moisture: 0
+          med_moisture: 70
+          max_moisture: 80
 

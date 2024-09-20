@@ -15,7 +15,7 @@ namespace esphome
                 std::string entity;
                 std::string name;
 
-                static const size_t bufferSize = 1024;
+                static const size_t bufferSize = 2048;
                 StaticJsonDocument<bufferSize> jsonBuffer;
                 JsonObject modeConfig;
 

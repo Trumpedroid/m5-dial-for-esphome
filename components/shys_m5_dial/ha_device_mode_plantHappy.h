@@ -1,0 +1,239 @@
+#pragma once
+#include "globals.h"
+#include "global_image_data.h"
+#include "global_image_apedroid.h"
+
+namespace esphome
+{
+    namespace shys_m5_dial
+    {
+        class HaDeviceModePlantHappy: public esphome::shys_m5_dial::HaDeviceMode {
+            protected:
+                bool openOnButton = false;
+                std::string lockState = "unknown";
+
+                long openingTime = 0;
+
+
+                bool isOpenOnButton(){
+                    return this->openOnButton;
+                }
+
+                bool isOpen(){
+                    return strcmp(lockState.c_str(), "open")==0 || strcmp(lockState.c_str(), "opening")==0;
+                }
+                
+                bool isLocked(){
+                    return strcmp(lockState.c_str(), "locked")==0 || strcmp(lockState.c_str(), "locking")==0;
+                }
+
+                bool isUnlocked(){
+                    return strcmp(lockState.c_str(), "unlocked")==0 || strcmp(lockState.c_str(), "unlocking")==0;
+                }
+
+                std::string getLockState(){
+                
+                    if(openingTime + 5000 > esphome::millis()){
+                        return "Opening";
+                    }
+                    return this->lockState;
+                }
+
+                void sendValueToHomeAssistant(int value) override {
+                    /*
+                    switch(value){
+                        case 0:
+                            this->openLock();
+                            break;
+                        case 1:
+                            haApi.unlockLock(this->device.getEntityId());
+                            break;
+                        case 2:
+                            haApi.lockLock(this->device.getEntityId());
+                            break;
+                    }
+                    */
+                }
+
+                void showPlantHappyStatus(M5DialDisplay& display){
+
+                    LovyanGFX* gfx = display.getGfx();
+
+                    uint16_t height = gfx->height();
+                    uint16_t width  = gfx->width();
+
+                    int currentValue = getValue();
+                    //invert value
+                    int invertedValue = height-currentValue;
+
+                    int medValue = getMedValue();
+                    ESP_LOGD("DISPLAY", "showPlantHappyStateMenu Function call");
+                    
+
+                    gfx->setTextColor(MAROON);
+                    gfx->setTextDatum(middle_center);
+                    
+                    gfx->startWrite();                      // Secure SPI bus
+                    if(currentValue <= medValue){
+                        gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue)  , RED);
+                    }else{
+                        gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue)  , ORANGE);
+                    }
+                    //lower value
+                    gfx->fillRect(0, this->getDisplayPositionY(currentValue) , width, height, CYAN);
+
+                    display.setFontsize(3);
+                    gfx->drawString(String(currentValue).c_str(),
+                                    width / 2,
+                                    height / 2 - 10);                        
+                    
+                    display.setFontsize(1);
+                    
+                    gfx->drawString(this->device.getName().c_str(),
+                                    width / 2,
+                                    height / 2 - 80);
+                    gfx->drawString("Plant Humidity",
+                                    width / 2,
+                                    height / 2 - 60);  
+                    
+                    //display.drawBitmapTransparent(OPEN_DOOR_IMG2, width/2-35, height/2+30, 70, 70, 0xFFFF);
+                    display.drawBitmapTransparent(apedroid2_m5_Dial, width/2-35, height/2+30, 80, 80, 0xFFFF);
+                    
+                    display.setFontsize(.7);
+                
+                    gfx->endWrite();                      // Release SPI bus
+                }
+                // doing things within the mode 
+                void setReceivedLockState(const std::string& newState){
+                    this->lockState = newState;
+
+                    if (this->isLocked()){
+                        this->setReceivedValue(2);
+                    } else if (this->isUnlocked()){
+                        this->setReceivedValue(1);
+                    } else if (this->isOpen()){
+                        this->setReceivedValue(0);
+                    }
+                    this->displayRefreshNeeded = true;
+                }
+
+                void openLock(){
+                    haApi.openLock(this->device.getEntityId());
+                    this->openingTime = esphome::millis();
+                }
+
+            public:
+                HaDeviceModePlantHappy(HaDevice& device) : HaDeviceMode(device){
+                    setMaxValue(90);
+                }
+
+                void setOpenOnButton(bool openOnBtn){
+                    this->openOnButton = openOnBtn;
+                }
+
+
+                void refreshDisplay(M5DialDisplay& display, bool init) override {
+                    ESP_LOGD("DISPLAY", "refresh Display: Lock-Modus");
+                    this->showPlantHappyStatus(display);
+                    
+                    this->displayRefreshNeeded = false;
+                }
+
+                void registerHAListener() override {
+                    std::string attrNameState = "";
+                    api::global_api_server->subscribe_home_assistant_state(
+                                this->device.getEntityId().c_str(),
+                                attrNameState, 
+                                [this](const std::string &state) {
+
+                        if(this->isValueModified()){
+                            return;
+                        }
+
+                        int newState = std::stoi(state.c_str());
+
+                        this->setReceivedValue(newState);
+
+                        //this->setReceivedLockState(state);
+                        ESP_LOGI("HA_API", "Got PLANT HAPPY State %s for %s", state.c_str(), this->device.getEntityId().c_str());
+                    });
+                }
+
+                bool onButton(M5DialDisplay& display, const char * clickType) override {
+                    /*
+                    if (strcmp(clickType, BUTTON_SHORT)==0){
+                        if(this->isLocked()){
+                            if(this->isOpenOnButton()){
+                                this->openLock();
+                                return true;
+                            } else {
+                                haApi.unlockLock(this->device.getEntityId());
+                                return true;
+                            }
+                        } else if(this->isUnlocked() || this->isOpen()){
+                            haApi.lockLock(this->device.getEntityId());
+                            return true;
+                        }
+                    }
+
+                    this->displayRefreshNeeded = true;
+                    */
+                    return false;
+                }
+
+                bool deviceChangeOnRotary(M5DialDisplay& display, const char * direction)  {
+                    if (strcmp(direction, ROTARY_LEFT)==0){
+                        // set previous device
+                        //this->reduceCurrentValue();
+                    } else if (strcmp(direction, ROTARY_RIGHT)==0){
+                        // set next device
+                        //this->raiseCurrentValue();
+                    }
+
+                    return true;
+                }
+
+                bool onRotary(M5DialDisplay& display, const char * direction) override {
+                    this->deviceChangeOnRotary(display, direction);
+                    /*
+                    if(getValue()==0){
+                        this->openingTime = esphome::millis();
+                    }
+                    */
+                    return true;
+                }
+
+                bool onTouch(M5DialDisplay& display, uint16_t x, uint16_t y) override {
+                    ESP_LOGI("TOUCH", "Touch %i / %i for %s", x, y, this->device.getEntityId().c_str());
+                    /*
+                    LovyanGFX* gfx = display.getGfx();
+                    uint16_t height = gfx->height();
+                    uint16_t width  = gfx->width();
+
+                    uint16_t minOpenY = height/2+30;
+                    uint16_t maxOpenY = height/2+100;
+                    uint16_t minOpenX = width/2-40;
+                    uint16_t maxOpenX = width/2+40;
+
+                    if(y > minOpenY && y < maxOpenY){
+                        if(x>minOpenX && x<maxOpenX){
+                            M5Dial.Speaker.tone(5000, 20);
+                            this->openLock();
+                            return true;
+                        } 
+                    }
+                    */
+                    return false;
+                }
+
+                void onLoop(){
+                    /*
+                    if(openingTime>0 && openingTime + 7000 < esphome::millis()){
+                        this->displayRefreshNeeded = true;
+                        openingTime = 0;
+                    }
+                    */
+                }
+        };
+    }
+}

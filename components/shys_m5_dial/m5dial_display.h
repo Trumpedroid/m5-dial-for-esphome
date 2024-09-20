@@ -1,7 +1,7 @@
 #pragma once
 #include "M5Dial.h"
 #include "esphome.h"
-
+#include "global_image_apedroid.h"
 namespace esphome
 {
     namespace shys_m5_dial
@@ -76,10 +76,10 @@ namespace esphome
                     gfx->fillRect(0, 0, width, height, DARKGREY);
                     
                     this->setFontsize(2);
-                    gfx->drawString("OFFLINE 2",
+                    gfx->drawString("OFFLINE",
                                     width / 2,
-                                    height / 2);
-
+                                    height / 2-20);
+                    gfx->pushImage(width/2-35, height/2+30, 80, 80, apedroid2_m5_Dial , 0xFFFF);
                     gfx->endWrite();                      // Release SPI bus
                 }
 

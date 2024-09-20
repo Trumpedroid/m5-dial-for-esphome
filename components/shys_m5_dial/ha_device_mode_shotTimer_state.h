@@ -33,22 +33,26 @@ namespace esphome
                     gfx->setTextDatum(middle_center);
                     
                     gfx->startWrite();                      // Secure SPI bus
-
+                    //upper block
                     gfx->fillRect(0, 0, width, this->getDisplayPositionY(currentValue) , CYAN);
+                    //lower block
                     gfx->fillRect(0, this->getDisplayPositionY(currentValue), width, height, ORANGE);
-
+                    ESP_LOGD("DISPLAY", "-------------------------- ALL FINE now get device.name");
                     display.setFontsize(3);
                     gfx->drawString(String(currentValue).c_str(),
                                     width / 2,
                                     height / 2 - 30);                        
                     
                     display.setFontsize(1);
+                    ESP_LOGD("DISPLAY", "-------------------------- STILL  ALL FINE now get device.name");
                     gfx->drawString(this->device.getName().c_str(),
                                     width / 2,
                                     height / 2 + 20);
+                    ESP_LOGD("DISPLAY", "-------------------------- STILL ALL FINE 2 now get device.name");
                     gfx->drawString("shotTimer State",
                                     width / 2,
                                     height / 2 + 50);  
+
 
                     gfx->endWrite();                      // Release SPI bus
                 }
@@ -64,7 +68,7 @@ namespace esphome
                 }
 
                 void registerHAListener() override {
-                    std::string attrNameState = "";
+                    std::string attrNameState = "MR022480 Shot timer";
                     api::global_api_server->subscribe_home_assistant_state(
                                 this->device.getEntityId().c_str(),
                                 attrNameState, 
@@ -79,30 +83,11 @@ namespace esphome
 
                         //this->setHvacMode(state.c_str());
                         //This listener gets called
-                        //ESP_LOGI("HA_API", "Got shotTimer State Mode %s in int %i for %s", state.c_str(), int(state.c_str()), this->device.getEntityId().c_str());
+                        ESP_LOGI("HA_API", "Got shotTimer State Mode %s in int %i for %s", state.c_str(), int(state.c_str()), this->device.getEntityId().c_str());
                     });
 
-                    std::string attrNameTemp = "temperature";
-                    api::global_api_server->subscribe_home_assistant_state(
-                                this->device.getEntityId().c_str(),
-                                attrNameTemp, 
-                                [this](const std::string &state) {
-                        ESP_LOGI("HA_API", "Subscribe HA --  shotTimer State Mode %s for %s", state.c_str(), this->device.getEntityId().c_str());
-
-                        if(this->isValueModified()){
-                            return;
-                        }
-
-                        auto val = parse_number<int>(state);
-
-                        if (!val.has_value()) {
-                            this->setReceivedValue(0);
-                            ESP_LOGD("HA_API", "No shotTimer State value in %s for %s", state.c_str(), this->device.getEntityId().c_str());
-                        } else {
-                            this->setReceivedValue(int(val.value()));
-                            ESP_LOGI("HA_API", "Got shotTimer State value %i for %s", int(val.value()), this->device.getEntityId().c_str());
-                        }
-                    });
+                   
+                   
                 }           
 
         };
